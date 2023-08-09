@@ -1,0 +1,37 @@
+registered_users:
+  - mail: yourfirstmail@hotmail.com
+    user_name: yourfirstusername
+    password: yourfirstpassword
+
+mask_rule:
+  '*': "0123456789"
+  '#': "0123456789"
+  '¥': "0123456789"
+  '@': "0123456789"
+  '?': "0123456789"
+
+mask_count_max: 2
+interval_time_min: 2
+interval_time_max: 5
+
+filter_keywords:
+  - "码"
+
+
+reverse: false
+show_progress_bar: false
+
+#dingding_notify_access_token:
+
+#input_mask:
+#  - "123456*1234*1234"
+#  - "12345*12345*1234"
+
+#proxy:
+#  http: http://127.0.0.1:7890
+#  https: http://127.0.0.1:7890
+
+#img_ocr:
+#  app_key:
+#  secret:
+

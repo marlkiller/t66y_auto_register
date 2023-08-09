@@ -1,0 +1,4 @@
+beautifulsoup4==4.11.1
+ddddocr==1.4.7
+PyYAML==6.0
+Requests==2.31.0
