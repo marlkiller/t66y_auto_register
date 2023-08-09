@@ -20,8 +20,7 @@ import yaml
 # pip3 install beautifulsoup4
 from bs4 import BeautifulSoup
 
-# dddd_ocr = ddddocr.DdddOcr(show_ad=False, ocr=True)
-dddd_ocr = ddddocr.DdddOcr()
+dddd_ocr = ddddocr.DdddOcr(show_ad=False, ocr=True)
 
 LOGGER_FMT = '%(asctime)s %(filename)s-%(funcName)s-[%(lineno)d] - %(threadName)s [%(levelname)s]  : %(message)s'
 LOGGER_DATA_FORMAT = '[%Y-%m-%d %H:%M:%S]'
@@ -306,6 +305,9 @@ class RegisteredTask:
                     return False
                 elif response.text.find("parent.retmsg('1')") != -1:
                     LOG.warning(f"此用戶名 [{self.user_name}] 包含不可接受字符或被管理員屏蔽,請選擇其它用戶名")
+                    return False
+                elif response.text.find("parent.retmsg('0')") != -1:
+                    LOG.warning(f"用戶名長度錯誤！ [{self.user_name}]")
                     return False
                 elif response.text.find("parent.retmsg('5')") != -1:
                     LOG.info(f"驗證碼 [{validate}] 不正確，請重新填寫")

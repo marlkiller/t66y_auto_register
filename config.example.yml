@@ -1,6 +1,6 @@
 registered_users:
   - mail: yourfirstmail@hotmail.com
-    user_name: yourfirstusername
+    user_name: yourfirstuser
     password: yourfirstpassword
 
 mask_rule:
