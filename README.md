@@ -120,6 +120,6 @@ python3 t66y_auto_register.py
 
 **如果感觉对您有帮助，请作者喝杯咖啡吧，请注明您的名字或者昵称，方便作者感谢o(*￣︶￣*)o**
 
-|         **ALIPAY**          |         **WECHAT**          |
+|         **WECHAT**          |         **ALIPAY**          |
 |:---------------------------:|:---------------------------:|
 | ![](doc/wechat_resized.jpg) | ![](doc/alipay_resized.jpg) |
