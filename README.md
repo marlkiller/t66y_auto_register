@@ -29,6 +29,7 @@
 ```
 pip3 install ddddocr
 pip3 install --force-reinstall -v "Pillow==9.5.0"
+pip3 install pyyaml
 pip3 install beautifulsoup4
 pip3 install requests
 ```
