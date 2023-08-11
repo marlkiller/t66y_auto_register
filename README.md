@@ -52,8 +52,9 @@ LOG_LEVEL=INFO
     ```
 
 2. 配置掩码匹配规则
+   > 字母只会是abcdef中的，其他20个字母不会出现在邀请码里面的
    > 如果某字符 '#' 要包含字母与数字, 则规则为:  
-   > '#': "0123456789abcdefghijklmnopqrstuvwxyz"
+   > '#': "0123456789abcdef"  
 
     ```yml
     mask_rule:

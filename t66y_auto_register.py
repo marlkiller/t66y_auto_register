@@ -113,8 +113,8 @@ MASK_RULE = config.get("mask_rule", {})
 MASK_RULE_KEYS = list(MASK_RULE.keys())
 
 # 1234*#¥@?2341234
-# [0-9a-z*#¥@?]{16}
-INVITATION_CODE_REGEX = r'[0-9a-z%s]{16}' % "".join(MASK_RULE_KEYS)
+# [0-9a-f*#¥@?]{16}
+INVITATION_CODE_REGEX = r'[0-9a-f%s]{16}' % "".join(MASK_RULE_KEYS)
 # 自定义指定输入邀请码
 INPUT_MASK = config.get("input_mask", [])
 # 过滤标题关键词
@@ -201,7 +201,7 @@ def generate_random_ip():
 
 # 获取邀请码中掩码位数量
 def count_non_alphanumeric(code_mask):
-    non_alphanumeric = re.sub(r'[a-zA-Z0-9]', '', code_mask)
+    non_alphanumeric = re.sub(r'[a-f0-9]', '', code_mask)
     return len(non_alphanumeric)
 
 
@@ -270,6 +270,15 @@ class BannedIPException(Exception):
         super().__init__("Your IP is banned, Please change the network environment !!!", "nginx 403")
 
 
+def filter_codes_by_mask_num(codes):
+    for code in codes.copy():
+        mask_count = count_non_alphanumeric(code)
+        if mask_count > MASK_COUNT_MAX:
+            LOG.warning(
+                f"The number of bits of the mask is greater than {MASK_COUNT_MAX}, [{code}] will be skipped.")
+            codes.remove(code)
+
+
 class RegisteredTask:
     def __init__(self, registered_users):
         self.session = None
@@ -289,6 +298,13 @@ class RegisteredTask:
             if not GLOBAL_CODE_MASK or len(GLOBAL_CODE_MASK) == 0:
                 read_input_mask = INPUT_MASK and len(INPUT_MASK) > 0
                 if read_input_mask:
+                    for code in INPUT_MASK:
+                        match = re.match(INVITATION_CODE_REGEX, code)
+                        if not match:
+                            LOG.warning(
+                                f"The invitation code is in the wrong format, [{code}] will be skipped.")
+                            INPUT_MASK.remove(code)
+                    filter_codes_by_mask_num(INPUT_MASK)
                     GLOBAL_CODE_MASK = INPUT_MASK
                 else:
                     GLOBAL_CODE_MASK = self.search_post()
@@ -301,12 +317,6 @@ class RegisteredTask:
             LOG.info(f"GLOBAL_CODE_MASK is {GLOBAL_CODE_MASK}")
 
             for code_mask in GLOBAL_CODE_MASK.copy():
-                mask_count = count_non_alphanumeric(code_mask)
-                if mask_count > MASK_COUNT_MAX:
-                    LOG.warning(
-                        f"The number of bits of the mask is greater than {MASK_COUNT_MAX}, [{code_mask}] will be skipped.")
-                    GLOBAL_CODE_MASK.remove(code_mask)
-                    continue
                 total_num = calculate_possibilities_length(code_mask)
                 num = 0
                 for code_real in generate_real_codes_with_mask(code_mask):
@@ -456,6 +466,8 @@ class RegisteredTask:
                     codes_list.extend(img_codes_by_ocr(img_url))
                 except Exception as e:
                     LOG.error(f"Get img src error {str(e)}")
+        # codes = [code for code in codes if count_non_alphanumeric(code) <= MASK_COUNT_MAX]
+        filter_codes_by_mask_num(codes_list)
         return list(set(codes_list))
 
     # 使用邀请码注册
