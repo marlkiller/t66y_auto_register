@@ -19,8 +19,7 @@ import requests
 import yaml
 # pip3 install beautifulsoup4
 from bs4 import BeautifulSoup
-
-dddd_ocr = ddddocr.DdddOcr(show_ad=False, ocr=True)
+import importlib.metadata
 
 LOGGER_FMT = '%(asctime)s %(filename)s-%(funcName)s-[%(lineno)d] - %(threadName)s [%(levelname)s]  : %(message)s'
 LOGGER_DATA_FORMAT = '[%Y-%m-%d %H:%M:%S]'
@@ -60,6 +59,48 @@ try:
         config = yaml.load(file, Loader=yaml.FullLoader)
 except Exception as e:
     LOG.error("Loading the 'config.yml' fails")
+    LOG.error(e)
+    sys.exit()
+
+dddd_ocr = None
+
+
+def compared_version(ver1, ver2):
+    """
+    传入不带英文的版本号,特殊情况："10.12.2.6.5">"10.12.2.6"
+    :param ver1: 版本号1
+    :param ver2: 版本号2
+    :return: ver1< = >ver2返回-1/0/1
+    """
+    list1 = str(ver1).split(".")
+    list2 = str(ver2).split(".")
+    # 循环次数为短的列表的len
+    for i in range(len(list1)) if len(list1) < len(list2) else range(len(list2)):
+        if int(list1[i]) == int(list2[i]):
+            pass
+        elif int(list1[i]) < int(list2[i]):
+            return -1
+        else:
+            return 1
+    # 循环结束，哪个列表长哪个版本号高
+    if len(list1) == len(list2):
+        return 0
+    elif len(list1) < len(list2):
+        return -1
+    else:
+        return 1
+
+
+try:
+    ddddocr_version = importlib.metadata.version("ddddocr")
+    compare = compared_version(ddddocr_version, "1.0.6")
+    # if ddddocr_version and ddddocr_version > "1.0.6":
+    if compare > 0:
+        dddd_ocr = ddddocr.DdddOcr(show_ad=False, ocr=True)
+    else:
+        dddd_ocr = ddddocr.DdddOcr()
+except Exception as e:
+    LOG.error("init 'ddddocr' fails")
     LOG.error(e)
     sys.exit()
 
