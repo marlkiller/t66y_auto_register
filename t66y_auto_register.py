@@ -78,6 +78,8 @@ INVITATION_CODE_REGEX = r'[0-9a-z%s]{16}' % "".join(MASK_RULE_KEYS)
 INPUT_MASK = config.get("input_mask", [])
 # 过滤标题关键词
 FILTER_KEYWORDS = config.get("filter_keywords", [])
+#过滤无用的关键词
+FILTER_USELESS_KEYWORDS = config.get("filter_useless_keywords", [])
 # 请求间隔下限(秒)
 INTERVAL_TIME_MIN = config.get("interval_time_min", 2)
 # 请求间隔上限(秒)
@@ -376,7 +378,10 @@ class RegisteredTask:
                 if GLOBAL_REPLIED_POST.__contains__(tid):
                     LOG.debug(f"Ignore post: Already used >>> \n{time}:{t_title}\n\t>>>> : {CL_HOST}/{href}")
                     continue
-
+                if FILLTER_USELESS_KEYWORDS and len(FILTER_USELESS_KEYWORDS) > 0:
+                    if any(k in t_title for k in FILLTER_USELESS_KEYWORDS):
+                        LOG.debug(f"Ignore useless post: Useless keywords filter >>> \n{time}:{t_title}\n\t>>>> : {CL_HOST}/{href}")
+                        continue
                 GLOBAL_REPLIED_POST.append(tid)
                 LOG.info(f"Match a post \n{time}:{t_title}\n\t>>>> : {CL_HOST}/{href}")
                 notify_msg(f"Match a post \n{time}:{t_title}\n\t>>>> : {CL_HOST}/{href}")
