@@ -17,6 +17,9 @@ interval_time_max: 5
 filter_keywords:
   - "码"
 
+filter_useless_keywords:
+  - "无码"
+  - "有码"
 
 reverse: false
 show_progress_bar: false
